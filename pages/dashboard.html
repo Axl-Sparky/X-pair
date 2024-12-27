@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Upload and Display</title>
+    <title>Upload Image to Postimages</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,7 +11,6 @@
             text-align: center;
             padding: 50px;
         }
-
         .container {
             max-width: 600px;
             margin: 0 auto;
@@ -20,12 +19,10 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             padding: 20px;
         }
-
         input[type="file"] {
             padding: 10px;
             font-size: 16px;
         }
-
         input[type="submit"] {
             padding: 10px 20px;
             font-size: 16px;
@@ -35,18 +32,15 @@
             border-radius: 4px;
             cursor: pointer;
         }
-
         input[type="submit"]:hover {
             background-color: #0056b3;
         }
-
         img {
             margin-top: 20px;
             max-width: 100%;
             height: auto;
             border-radius: 8px;
         }
-
         .url-display {
             margin-top: 10px;
             font-family: monospace;
@@ -56,7 +50,7 @@
 </head>
 <body>
 
-    <h1>Upload and Display Your Image</h1>
+    <h1>Upload Image to Postimages</h1>
     <div class="container">
         <form id="imageForm" onsubmit="handleImageUpload(event)">
             <input type="file" id="imageInput" name="image" required><br><br>
@@ -74,26 +68,26 @@
         function handleImageUpload(event) {
             event.preventDefault(); // Prevent form submission
 
-            // Get the selected file
-            const imageInput = document.getElementById('imageInput');
-            const file = imageInput.files[0];
+            const formData = new FormData(document.getElementById("imageForm"));
 
-            if (file) {
-                // Create a temporary URL for the image using FileReader
-                const reader = new FileReader();
-
-                reader.onload = function(e) {
-                    const imageUrl = e.target.result; // The base64 URL for the image
-
-                    // Show the image and URL
+            fetch('upload.php', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
                     document.getElementById('imageContainer').style.display = 'block';
-                    document.getElementById('uploadedImage').src = imageUrl; // Display the image
-                    document.getElementById('imageUrlDisplay').textContent = imageUrl; // Display the URL
-                };
-
-                // Read the image as a data URL (base64)
-                reader.readAsDataURL(file);
-            }
+                    document.getElementById('uploadedImage').src = data.imageUrl; // Display the image
+                    document.getElementById('imageUrlDisplay').textContent = data.imageUrl; // Display the URL
+                } else {
+                    alert('Error uploading the image.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while uploading.');
+            });
         }
     </script>
 
