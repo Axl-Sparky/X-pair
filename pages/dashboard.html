@@ -8,13 +8,8 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
-            color: #333;
             text-align: center;
-            padding: 20px;
-        }
-
-        h1 {
-            color: #333;
+            padding: 50px;
         }
 
         .container {
@@ -26,13 +21,9 @@
             padding: 20px;
         }
 
-        input[type="text"] {
-            width: 80%;
+        input[type="file"] {
             padding: 10px;
-            margin: 10px 0;
             font-size: 16px;
-            border: 2px solid #ddd;
-            border-radius: 4px;
         }
 
         input[type="submit"] {
@@ -49,15 +40,11 @@
             background-color: #0056b3;
         }
 
-        .image-container {
-            margin-top: 20px;
-        }
-
         img {
+            margin-top: 20px;
             max-width: 100%;
             height: auto;
             border-radius: 8px;
-            margin-top: 20px;
         }
 
         .url-display {
@@ -69,17 +56,14 @@
 </head>
 <body>
 
-    <h1>Upload Your Image and Display It</h1>
+    <h1>Upload and Display Your Image</h1>
     <div class="container">
-        <p>Upload an image to a service like Postimages and paste the URL below:</p>
-        
-        <form id="imageForm">
-            <label for="imageUrl">Image URL (from Postimages):</label><br>
-            <input type="text" id="imageUrl" placeholder="Paste your image URL here" required><br><br>
-            <input type="submit" value="Display Image">
+        <form id="imageForm" onsubmit="handleImageUpload(event)">
+            <input type="file" id="imageInput" name="image" required><br><br>
+            <input type="submit" value="Upload Image">
         </form>
 
-        <div class="image-container" id="imageContainer" style="display: none;">
+        <div id="imageContainer" style="display: none;">
             <h2>Uploaded Image:</h2>
             <img id="uploadedImage" src="" alt="Your uploaded image">
             <p class="url-display" id="imageUrlDisplay"></p>
@@ -87,24 +71,30 @@
     </div>
 
     <script>
-        document.getElementById('imageForm').addEventListener('submit', function(event) {
-            event.preventDefault();
+        function handleImageUpload(event) {
+            event.preventDefault(); // Prevent form submission
 
-            // Get the URL from the input field
-            var imageUrl = document.getElementById('imageUrl').value;
+            // Get the selected file
+            const imageInput = document.getElementById('imageInput');
+            const file = imageInput.files[0];
 
-            // Check if the URL is valid
-            if (imageUrl.includes("https://i.postimg.cc/")) {
-                // Show the image and the URL
-                document.getElementById('uploadedImage').src = imageUrl;
-                document.getElementById('imageUrlDisplay').textContent = imageUrl;
+            if (file) {
+                // Create a temporary URL for the image using FileReader
+                const reader = new FileReader();
 
-                // Display the image section
-                document.getElementById('imageContainer').style.display = 'block';
-            } else {
-                alert('Please enter a valid image URL from Postimages.');
+                reader.onload = function(e) {
+                    const imageUrl = e.target.result; // The base64 URL for the image
+
+                    // Show the image and URL
+                    document.getElementById('imageContainer').style.display = 'block';
+                    document.getElementById('uploadedImage').src = imageUrl; // Display the image
+                    document.getElementById('imageUrlDisplay').textContent = imageUrl; // Display the URL
+                };
+
+                // Read the image as a data URL (base64)
+                reader.readAsDataURL(file);
             }
-        });
+        }
     </script>
 
 </body>
