@@ -3,130 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Image to Catbox</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            color: #333;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .container {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 500px;
-            text-align: center;
-        }
-
-        h1 {
-            color: #4CAF50;
-        }
-
-        p {
-            font-size: 1rem;
-            color: #666;
-        }
-
-        input[type="file"] {
-            padding: 10px;
-            margin: 20px 0;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            width: 100%;
-            background-color: #fff;
-            cursor: pointer;
-        }
-
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 100%;
-            margin-bottom: 20px;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        #result {
-            font-size: 1rem;
-            margin-top: 20px;
-        }
-
-        a {
-            color: #007bff;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <title>Image Uploader</title>
 </head>
 <body>
+    <h1>Upload Your Image</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <label for="image">Choose an image to upload:</label>
+        <input type="file" id="image" name="image" accept="image/*" required><br><br>
+        <button type="submit">Upload Image</button>
+    </form>
 
-    <div class="container">
-        <h1>Upload Image to Catbox</h1>
-        <p>Select an image file to upload. The uploaded image will be hosted on Catbox.</p>
-
-        <!-- File input and Upload button -->
-        <input type="file" id="fileInput" />
-        <button onclick="uploadImage()">Upload</button>
-
-        <h2>Uploaded Image URL:</h2>
-        <p id="result"></p>
-    </div>
+    <h2>Uploaded Image URL:</h2>
+    <p id="url"></p>
 
     <script>
-        // Function to upload image to Catbox and display the URL
-        function uploadImage() {
-            var fileInput = document.getElementById('fileInput');
-            var file = fileInput.files[0];
+        const form = document.getElementById("uploadForm");
+        const urlDisplay = document.getElementById("url");
 
-            // Check if a file is selected
-            if (!file) {
-                alert('Please select a file.');
-                return;
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const formData = new FormData(form);
+
+            try {
+                // Send the form data to the catbox.moe API
+                const response = await fetch("https://catbox.moe/user/api.php", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Display the URL of the uploaded image
+                    urlDisplay.textContent = `Image URL: https://files.catbox.moe/${data.file}`;
+                } else {
+                    // If upload fails
+                    urlDisplay.textContent = "Upload failed, please try again.";
+                }
+            } catch (error) {
+                console.error(error);
+                urlDisplay.textContent = "An error occurred, please try again.";
             }
-
-            // Create FormData to send the file
-            var formData = new FormData();
-            formData.append('fileToUpload', file);
-
-            // Upload the file to Catbox using fetch
-            fetch('https://catbox.moe/user/api.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.text())  // Get the response from Catbox
-            .then(data => {
-                // Trim the response to get the file ID and create the full URL
-                var fileUrl = 'https://files.catbox.moe/' + data.trim();
-                // Display the URL on the page
-                document.getElementById('result').innerHTML = 'Image uploaded! URL: <a href="' + fileUrl + '" target="_blank">' + fileUrl + '</a>';
-            })
-            .catch(error => {
-                console.error('Error uploading file:', error);
-                alert('Upload failed. Please try again.');
-            });
-        }
+        });
     </script>
-
 </body>
 </html>
