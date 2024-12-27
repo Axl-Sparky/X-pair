@@ -3,71 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Image to Catbox</title>
+    <title>Upload Image to Cloudinary</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
-            padding-top: 50px;
-        }
-        .container {
-            width: 50%;
-            margin: 0 auto;
+            margin: 50px;
         }
         input[type="file"] {
             margin-bottom: 20px;
         }
-        .result {
+        #img-url {
             margin-top: 20px;
-            font-size: 18px;
+            word-wrap: break-word;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Upload an Image to Catbox</h1>
-        <form id="uploadForm" enctype="multipart/form-data">
-            <input type="file" name="image" id="image" required>
-            <br>
-            <button type="submit">Upload</button>
-        </form>
-        <div id="result" class="result"></div>
-    </div>
+    <h1>Upload Image and Get URL (Cloudinary)</h1>
+
+    <!-- File upload form -->
+    <input type="file" id="image" name="image" accept="image/*" />
+    <button id="upload-button">Upload Image</button>
+
+    <h2>Image URL:</h2>
+    <p id="img-url"></p>
 
     <script>
-        document.getElementById('uploadForm').addEventListener('submit', function(event) {
-            event.preventDefault();
+        // Replace with your Cloudinary Cloud Name and Upload preset
+        const cloudName = 'ml_default';  // Example: 'demo'
+        const uploadPreset = '3cff8b8a-e6c2-474a-a4b1-eba6b7ec4035';  // Example: 'ml_default'
 
+        // Handle image upload
+        document.getElementById("upload-button").addEventListener("click", function() {
             const fileInput = document.getElementById("image");
             const file = fileInput.files[0];
 
             if (!file) {
-                document.getElementById("result").innerHTML = "Please select a file.";
+                alert("Please select an image first.");
                 return;
             }
 
             const formData = new FormData();
-            formData.append("fileToUpload", file);  // Form data key for file upload to Catbox
+            formData.append("file", file);
+            formData.append("upload_preset", uploadPreset);
 
-            // Catbox API endpoint for file uploads
-            const catboxApiUrl = 'https://catbox.moe/user/api.php';
+            // Cloudinary upload URL
+            const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
 
-            fetch(catboxApiUrl, {
-                method: 'POST',
+            // Make a POST request to Cloudinary API to upload the image
+            fetch(cloudinaryUrl, {
+                method: "POST",
                 body: formData
             })
-            .then(response => response.text())
+            .then(response => response.json())
             .then(data => {
-                // Catbox returns the URL or an error message
-                if (data.startsWith('https://catbox.moe/')) {
-                    const imageUrl = data.trim();  // URL of the uploaded image
-                    document.getElementById("result").innerHTML = `Your image is uploaded! <br><a href="${imageUrl}" target="_blank">View Image</a>`;
+                if (data.secure_url) {
+                    const imageURL = data.secure_url;  // URL of the uploaded image
+                    document.getElementById("img-url").textContent = imageURL;
                 } else {
-                    document.getElementById("result").innerHTML = "An error occurred during upload: " + data;
+                    alert("Failed to upload image.");
                 }
             })
             .catch(error => {
-                document.getElementById("result").innerHTML = "An error occurred.";
+                console.error("Error uploading image:", error);
+                alert("An error occurred while uploading the image.");
             });
         });
     </script>
