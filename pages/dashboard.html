@@ -3,93 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Image to Postimages</title>
+    <title>Upload Image to Catbox</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
             text-align: center;
-            padding: 50px;
+            padding-top: 50px;
         }
         .container {
-            max-width: 600px;
+            width: 50%;
             margin: 0 auto;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
         }
         input[type="file"] {
-            padding: 10px;
-            font-size: 16px;
+            margin-bottom: 20px;
         }
-        input[type="submit"] {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #007BFF;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-        img {
+        .result {
             margin-top: 20px;
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-        }
-        .url-display {
-            margin-top: 10px;
-            font-family: monospace;
-            color: #555;
+            font-size: 18px;
         }
     </style>
 </head>
 <body>
-
-    <h1>Upload Image to Postimages</h1>
     <div class="container">
-        <form id="imageForm" onsubmit="handleImageUpload(event)">
-            <input type="file" id="imageInput" name="image" required><br><br>
-            <input type="submit" value="Upload Image">
+        <h1>Upload an Image to Catbox</h1>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <input type="file" name="image" id="image" required>
+            <br>
+            <button type="submit">Upload</button>
         </form>
-
-        <div id="imageContainer" style="display: none;">
-            <h2>Uploaded Image:</h2>
-            <img id="uploadedImage" src="" alt="Your uploaded image">
-            <p class="url-display" id="imageUrlDisplay"></p>
-        </div>
+        <div id="result" class="result"></div>
     </div>
 
     <script>
-        function handleImageUpload(event) {
-            event.preventDefault(); // Prevent form submission
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            event.preventDefault();
 
-            const formData = new FormData(document.getElementById("imageForm"));
+            const fileInput = document.getElementById("image");
+            const file = fileInput.files[0];
 
-            fetch('upload.php', {
+            if (!file) {
+                document.getElementById("result").innerHTML = "Please select a file.";
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("fileToUpload", file);  // Form data key for file upload to Catbox
+
+            // Catbox API endpoint for file uploads
+            const catboxApiUrl = 'https://catbox.moe/user/api.php';
+
+            fetch(catboxApiUrl, {
                 method: 'POST',
-                body: formData,
+                body: formData
             })
-            .then(response => response.json())
+            .then(response => response.text())
             .then(data => {
-                if (data.success) {
-                    document.getElementById('imageContainer').style.display = 'block';
-                    document.getElementById('uploadedImage').src = data.imageUrl; // Display the image
-                    document.getElementById('imageUrlDisplay').textContent = data.imageUrl; // Display the URL
+                // Catbox returns the URL or an error message
+                if (data.startsWith('https://catbox.moe/')) {
+                    const imageUrl = data.trim();  // URL of the uploaded image
+                    document.getElementById("result").innerHTML = `Your image is uploaded! <br><a href="${imageUrl}" target="_blank">View Image</a>`;
                 } else {
-                    alert('Error uploading the image.');
+                    document.getElementById("result").innerHTML = "An error occurred during upload: " + data;
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while uploading.');
+                document.getElementById("result").innerHTML = "An error occurred.";
             });
-        }
+        });
     </script>
-
 </body>
 </html>
