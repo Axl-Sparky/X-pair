@@ -142,6 +142,10 @@
 
   
   </style>
+
+
+
+  
 </head>
 <body>
   <div class="container">
@@ -150,12 +154,84 @@
       Click below to pair
     </div>
 
+
+
+
+  <!-- Main Content Section -->
+  <main class="main-content">
+    <!-- Hidden file input (still functional) -->
+    <input type="file" id="imageUpload" class="upload-button" accept="image/*" style="display: none;" />
+    <!-- A div that will trigger the file input when clicked -->
+    <button id="uploadButton" class="upload-button">Upload Image</button>
+
+    <div id="imageUrlContainer">
+      <p><strong>Image URL:</strong> <span id="imageUrl"></span></p>
+    </div>
+  </main>
+
+  <!-- Footer Section -->
+  <footer class="footer">
+    <p>Nextro MD</p>
+  </footer>
+    
+
+    
     <button class="pair-button" onclick="showPreloader()">Pair Code</button>
   </div>
   <div class="preloader" id="preloader">
     <div class="loader"></div>
   </div>
   <script>
+
+
+const IMGUR_CLIENT_ID = 'd38285cbb53d8c3';  // <-- Replace with your own client ID
+
+    const imageUpload = document.getElementById("imageUpload");
+    const imageUrlElement = document.getElementById("imageUrl");
+    const uploadButton = document.getElementById("uploadButton");
+
+    // Trigger file input when the button is clicked
+    uploadButton.addEventListener("click", function () {
+      imageUpload.click(); // Programmatically trigger the file input
+    });
+
+    imageUpload.addEventListener("change", function (event) {
+      const file = event.target.files[0];
+      if (file) {
+        // Upload image to Imgur
+        uploadToImgur(file);
+      }
+    });
+
+    // Function to upload image to Imgur
+    function uploadToImgur(file) {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      fetch('https://api.imgur.com/3/upload', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Client-ID ${IMGUR_CLIENT_ID}`
+        },
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          const imgUrl = data.data.link;  // Get the image URL from Imgur response
+          imageUrlElement.textContent = imgUrl;
+        } else {
+          alert('Error uploading image to Imgur');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred during the upload');
+      });
+    }
+
+
+    
     function showPreloader() {
       const preloader = document.getElementById('preloader');
       preloader.style.display = 'flex'; 
