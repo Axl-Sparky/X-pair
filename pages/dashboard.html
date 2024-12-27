@@ -3,85 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catbox Image Link Replacer</title>
+    <title>Upload Image to Catbox</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            text-align: center;
+            background-color: #f0f0f0;
             color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
-        input[type="text"] {
+
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #4CAF50;
+        }
+
+        p {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        input[type="file"] {
             padding: 10px;
-            margin-bottom: 20px;
-            font-size: 16px;
+            margin: 20px 0;
             border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        button {
+            border-radius: 5px;
             width: 100%;
-            padding: 10px;
-            background-color: #28a745;
-            color: white;
-            font-size: 16px;
-            border: none;
-            border-radius: 4px;
+            background-color: #fff;
             cursor: pointer;
         }
-        button:hover {
-            background-color: #218838;
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-bottom: 20px;
+            transition: background-color 0.3s ease;
         }
-        .output {
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            font-size: 1rem;
             margin-top: 20px;
-            padding: 10px;
-            background-color: #e9ecef;
-            border-radius: 4px;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Catbox Image Link Replacer</h1>
-        <p>Enter your imgur image link below to convert it to a Catbox link:</p>
-        <input type="text" id="inputUrl" placeholder="Enter imgur image link">
-        <button onclick="convertLink()">Convert to Catbox</button>
+        <h1>Upload Image to Catbox</h1>
+        <p>Select an image file to upload. The uploaded image will be hosted on Catbox.</p>
 
-        <div class="output" id="output"></div>
+        <!-- File input and Upload button -->
+        <input type="file" id="fileInput" />
+        <button onclick="uploadImage()">Upload</button>
+
+        <h2>Uploaded Image URL:</h2>
+        <p id="result"></p>
     </div>
 
     <script>
-        // Function to convert imgur URL to catbox URL
-        function convertLink() {
-            const inputUrl = document.getElementById('inputUrl').value;
-            const outputDiv = document.getElementById('output');
-            
-            // Check if the URL contains imgur.com
-            if (inputUrl.includes('imgur.com')) {
-                // Extract the image ID from imgur URL (assuming the URL format is imgur.com/gallery/imageId or imgur.com/imageId)
-                let imageId = inputUrl.split("/")[3];  // Get image ID (e.g., imgur.com/gallery/abcdef or imgur.com/abcdef)
-                
-                // Convert to catbox URL
-                const catboxUrl = `https://files.catbox.moe/${imageId}`;
-                
-                // Display the result
-                outputDiv.innerHTML = `<strong>Converted Catbox URL:</strong><br><a href="${catboxUrl}" target="_blank">${catboxUrl}</a>`;
-            } else {
-                outputDiv.innerHTML = 'Please enter a valid imgur URL.';
+        // Function to upload image to Catbox and display the URL
+        function uploadImage() {
+            var fileInput = document.getElementById('fileInput');
+            var file = fileInput.files[0];
+
+            // Check if a file is selected
+            if (!file) {
+                alert('Please select a file.');
+                return;
             }
+
+            // Create FormData to send the file
+            var formData = new FormData();
+            formData.append('fileToUpload', file);
+
+            // Upload the file to Catbox using fetch
+            fetch('https://catbox.moe/user/api.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())  // Get the response from Catbox
+            .then(data => {
+                // Trim the response to get the file ID and create the full URL
+                var fileUrl = 'https://files.catbox.moe/' + data.trim();
+                // Display the URL on the page
+                document.getElementById('result').innerHTML = 'Image uploaded! URL: <a href="' + fileUrl + '" target="_blank">' + fileUrl + '</a>';
+            })
+            .catch(error => {
+                console.error('Error uploading file:', error);
+                alert('Upload failed. Please try again.');
+            });
         }
     </script>
 
