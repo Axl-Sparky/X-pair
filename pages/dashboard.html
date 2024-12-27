@@ -1,255 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <title>dashboard</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      background: #101010;
-      color: #fff;
-      font-family: 'Courier New', monospace;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      overflow: hidden;
-    }
-    .container {
-      width: 320px;
-      padding: 20px;
-      background: #151515;
-      border: 1px solid #444;
-      border-radius: 8px;
-      text-align: center;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-    }
-    .container:hover {
-      border-color: #00ff88;
-    }
-    .title {
-      font-size: 20px;
-      margin-bottom: 10px;
-      letter-spacing: 1px;
-      text-shadow: 0 0 5px #00ff88;
-    }
-    .description {
-      font-size: 14px;
-      margin-bottom: 20px;
-      color: #bbb;
-    }
-    .preloader {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #101010;
-      z-index: 1000;
-      justify-content: center;
-      align-items: center;
-    }
-    .loader {
-      border: 8px solid #f3f3f3;
-      border-top: 8px solid #00ff88;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      animation: spin 2s linear infinite;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    .pair-button {
-      font-size: 14px;
-      color: #00ff88;
-      background: transparent;
-      padding: 12px 20px;
-      border: 1px solid #00ff88;
-      border-radius: 5px;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      z-index: 1;
-      transition: all 0.3s ease;
-      margin-top: 30px; 
-    }
-    .pair-button::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, #00ff88, transparent);
-      transition: all 0.3s ease;
-      transform: skewX(-45deg);
-      z-index: -1;
-    }
-    .pair-button:hover::before {
-      left: 100%;
-    }
-    .pair-button:hover {
-      background: #00ff88;
-      color: #101010;
-      box-shadow: 0 0 10px #00ff88, 0 0 30px #00ff88;
-    }
-
-
-    .header {
-      background-color: #333;
-      color: #fff;
-      padding: 10px 20px;
-      width: 100%;
-      text-align: center;
-    }
-
-    /
-    .main-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 20px;
-    }
-
-    .upload-button {
-      margin-bottom: 20px;
-      padding: 10px 20px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      cursor: pointer;
-      font-size: 16px;
-    }
-
-    .upload-button:hover {
-      background-color: #45a049;
-    }
-
-    
-    .footer {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      background-color: #333;
-      color: #fff;
-      text-align: center;
-      padding: 10px
-
-  
-  </style>
-
-
-
-  
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catbox Image Link Replacer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .output {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div class="title">WHATSAPP FULL-PP ↓</div>
-    <div class="description">
-      Click below to upload image
+
+    <div class="container">
+        <h1>Catbox Image Link Replacer</h1>
+        <p>Enter your imgur image link below to convert it to a Catbox link:</p>
+        <input type="text" id="inputUrl" placeholder="Enter imgur image link">
+        <button onclick="convertLink()">Convert to Catbox</button>
+
+        <div class="output" id="output"></div>
     </div>
 
-    
-
-  <!-- Main Content Section -->
-  <main class="main-content">
-    <!-- Hidden file input (still functional) -->
-    <input type="file" id="imageUpload" class="upload-button" accept="image/*" style="display: none;" />
-    <!-- A div that will trigger the file input when clicked -->
-   <button id="uploadButton" class="pair-button" onclick="showPreloader()">upload</button> 
-
-    <div id="imageUrlContainer">
-    <!--  <div>
-      <p><strong>Image URL:</strong> <span id="imageUrl"></span></p>
-      
-  <div class="description">
-      Do not click on the continue button until the link appears
-  </div>
-    </div>
-
-
-      
-      -->
-      
-      <footer class="footer">
-    <p>© 𝙰𝚇𝙻</p>
-      </footer>
-  </main>
-
-  
-    
-
-    
-   <!-- <button class="pair-button" onclick="showPreloader()">Continue</button>  -->
-  </div>
-  <div class="preloader" id="preloader">
-    <div class="loader"></div>
-  </div>
-  <script>
-
-
-const IMGUR_CLIENT_ID = 'd38285cbb53d8c3';  // <-- Replace with your own client ID
-
-    const imageUpload = document.getElementById("imageUpload");
-    const imageUrlElement = document.getElementById("imageUrl");
-    const uploadButton = document.getElementById("uploadButton");
-
-    // Trigger file input when the button is clicked
-    uploadButton.addEventListener("click", function () {
-      imageUpload.click(); // Programmatically trigger the file input
-    });
-
-    imageUpload.addEventListener("change", function (event) {
-      const file = event.target.files[0];
-      if (file) {
-        // Upload image to Imgur
-        uploadToImgur(file);
-      }
-    });
-
-    // Function to upload image to Imgur
-    function uploadToImgur(file) {
-      const formData = new FormData();
-      formData.append('image', file);
-
-      fetch('https://api.imgur.com/3/upload', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Client-ID ${IMGUR_CLIENT_ID}`
-        },
-        body: formData
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          const imgUrl = data.data.link;  // Get the image URL from Imgur response
-          imageUrlElement.textContent = imgUrl;
-        } else {
-          alert('Error uploading image to Platform');
+    <script>
+        // Function to convert imgur URL to catbox URL
+        function convertLink() {
+            const inputUrl = document.getElementById('inputUrl').value;
+            const outputDiv = document.getElementById('output');
+            
+            // Check if the URL contains imgur.com
+            if (inputUrl.includes('imgur.com')) {
+                // Extract the image ID from imgur URL (assuming the URL format is imgur.com/gallery/imageId or imgur.com/imageId)
+                let imageId = inputUrl.split("/")[3];  // Get image ID (e.g., imgur.com/gallery/abcdef or imgur.com/abcdef)
+                
+                // Convert to catbox URL
+                const catboxUrl = `https://files.catbox.moe/${imageId}`;
+                
+                // Display the result
+                outputDiv.innerHTML = `<strong>Converted Catbox URL:</strong><br><a href="${catboxUrl}" target="_blank">${catboxUrl}</a>`;
+            } else {
+                outputDiv.innerHTML = 'Please enter a valid imgur URL.';
+            }
         }
-      })
-      .catch(error => {
-    console.error('Error:', error);
-    alert('An error occurred. You will be redirected to the main page.');
-    // Redirect to the main page (replace 'index.html' with your main page URL)
-    window.location.href = '/dashboard.html';
-});
-    }
+    </script>
 
-
-    
-    function showPreloader() {
-      const preloader = document.getElementById('preloader');
-      preloader.style.display = 'flex'; 
-      setTimeout(() => {
-        window.location.href = '/code/index.html'; 
-      }, 3000);
-    }
-  </script>
 </body>
 </html>
