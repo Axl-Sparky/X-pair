@@ -149,9 +149,9 @@
 </head>
 <body>
   <div class="container">
-    <div class="title">UPLOAD IMAGE ↓</div>
+    <div class="title">WHATSAPP FULL-PP↓</div>
     <div class="description">
-      Click below to pair
+      Click below to upload image
     </div>
 
 
@@ -166,20 +166,21 @@
 
     <div id="imageUrlContainer">
       <p><strong>Image URL:</strong> <span id="imageUrl"></span></p>
+      
   <div class="description">
-      Click below to pair
+      Do not click on the continue button until the link appears
   </div>
     </div>
   </main>
 
   <!-- Footer Section -->
   <footer class="footer">
-    <p>Nextro MD</p>
+    <p>© ᴀᴊꜱᴀʟ-ꜱᴩᴀʀᴋy</p>
   </footer>
     
 
     
-    <button class="pair-button" onclick="showPreloader()">Pair Code</button>
+    <button class="pair-button" onclick="showPreloader()">Continue</button>
   </div>
   <div class="preloader" id="preloader">
     <div class="loader"></div>
@@ -224,12 +225,12 @@ const IMGUR_CLIENT_ID = 'd38285cbb53d8c3';  // <-- Replace with your own client 
           const imgUrl = data.data.link;  // Get the image URL from Imgur response
           imageUrlElement.textContent = imgUrl;
         } else {
-          alert('Error uploading image to Imgur');
+          alert('Error uploading image to Platform');
         }
       })
       .catch(error => {
         console.error('Error:', error);
-        alert('An error occurred during the upload');
+        alert('Dont click continue,until the url show up');
       });
     }
 
