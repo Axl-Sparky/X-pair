@@ -98,6 +98,49 @@
       color: #101010;
       box-shadow: 0 0 10px #00ff88, 0 0 30px #00ff88;
     }
+
+/* Header Section Styling */
+    .header {
+      background-color: #333;
+      color: #fff;
+      padding: 10px 20px;
+      width: 100%;
+      text-align: center;
+    }
+
+    /* Main Content Section Styling */
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    .upload-button {
+      margin-bottom: 20px;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .upload-button:hover {
+      background-color: #45a049;
+    }
+
+    /* Footer Section Styling */
+    .footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      padding: 10px
+
+  
   </style>
 </head>
 <body>
@@ -107,85 +150,12 @@
       Click below to pair
     </div>
 
-  <!-- Main Content Section -->
-  <main class="main-content">
-    <input type="file" id="imageUpload" class="pair-button" accept="image/*"/>
-    <!-- <div id="imagePreviewContainer">
-   
-    
-      <img id="imagePreview" class="uploaded-image" style="display:none;" />
-   
-   -->
-      
-    </div>
-    <div id="imageUrlContainer">
-      <p><strong>Image URL:</strong> <span id="imageUrl"></span></p>
-   
-    </div>
-  </main>
-
-
-    
-
-    <!-- <button class="pair-button" onclick="showPreloader()">Pair Code</button>
+    <button class="pair-button" onclick="showPreloader()">Pair Code</button>
   </div>
   <div class="preloader" id="preloader">
     <div class="loader"></div>
   </div>
-   
-!--- -->
-    <script>
-      
-const IMGUR_CLIENT_ID = 'd38285cbb53d8c3';  // Replace with your own client ID
-
-    const imageUpload = document.getElementById("imageUpload");
-    const imagePreview = document.getElementById("imagePreview");
-    const imageUrlElement = document.getElementById("imageUrl");
-
-    imageUpload.addEventListener("change", function (event) {
-      const file = event.target.files[0];
-      if (file) {
-        // Show the image preview
-        const objectURL = URL.createObjectURL(file);
-        imagePreview.src = objectURL;
-        imagePreview.style.display = "block";
-        
-        // Upload image to Imgur
-        uploadToImgur(file);
-      }
-    });
-
-    // Function to upload image to Imgur
-    function uploadToImgur(file) {
-      const formData = new FormData();
-      formData.append('image', file);
-
-      fetch('https://api.imgur.com/3/upload', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Client-ID ${IMGUR_CLIENT_ID}`
-        },
-        body: formData
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          const imgUrl = data.data.link;  // Get the image URL from Imgur response
-          imageUrlElement.textContent = imgUrl;
-        } else {
-          alert('Error uploading image to Imgur');
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred during the upload');
-      });
-    }
-    
-
-
-    
-  
+  <script>
     function showPreloader() {
       const preloader = document.getElementById('preloader');
       preloader.style.display = 'flex'; 
