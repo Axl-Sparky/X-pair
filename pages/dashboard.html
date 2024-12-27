@@ -3,48 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Uploader</title>
+    <title>Image Upload and Display</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+        }
+
+        input[type="submit"] {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .image-container {
+            margin-top: 20px;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .url-display {
+            margin-top: 10px;
+            font-family: monospace;
+            color: #555;
+        }
+    </style>
 </head>
 <body>
-    <h1>Upload Your Image</h1>
-    <form id="uploadForm" enctype="multipart/form-data">
-        <label for="image">Choose an image to upload:</label>
-        <input type="file" id="image" name="image" accept="image/*" required><br><br>
-        <button type="submit">Upload Image</button>
-    </form>
 
-    <h2>Uploaded Image URL:</h2>
-    <p id="url"></p>
+    <h1>Upload Your Image and Display It</h1>
+    <div class="container">
+        <p>Upload an image to a service like Postimages and paste the URL below:</p>
+        
+        <form id="imageForm">
+            <label for="imageUrl">Image URL (from Postimages):</label><br>
+            <input type="text" id="imageUrl" placeholder="Paste your image URL here" required><br><br>
+            <input type="submit" value="Display Image">
+        </form>
+
+        <div class="image-container" id="imageContainer" style="display: none;">
+            <h2>Uploaded Image:</h2>
+            <img id="uploadedImage" src="" alt="Your uploaded image">
+            <p class="url-display" id="imageUrlDisplay"></p>
+        </div>
+    </div>
 
     <script>
-        const form = document.getElementById("uploadForm");
-        const urlDisplay = document.getElementById("url");
-
-        form.addEventListener("submit", async (event) => {
+        document.getElementById('imageForm').addEventListener('submit', function(event) {
             event.preventDefault();
-            const formData = new FormData(form);
 
-            try {
-                // Send the form data to the catbox.moe API
-                const response = await fetch("https://catbox.moe/user/api.php", {
-                    method: "POST",
-                    body: formData
-                });
+            // Get the URL from the input field
+            var imageUrl = document.getElementById('imageUrl').value;
 
-                const data = await response.json();
+            // Check if the URL is valid
+            if (imageUrl.includes("https://i.postimg.cc/")) {
+                // Show the image and the URL
+                document.getElementById('uploadedImage').src = imageUrl;
+                document.getElementById('imageUrlDisplay').textContent = imageUrl;
 
-                if (data.success) {
-                    // Display the URL of the uploaded image
-                    urlDisplay.textContent = `Image URL: https://files.catbox.moe/${data.file}`;
-                } else {
-                    // If upload fails
-                    urlDisplay.textContent = "Upload failed, please try again.";
-                }
-            } catch (error) {
-                console.error(error);
-                urlDisplay.textContent = "An error occurred, please try again.";
+                // Display the image section
+                document.getElementById('imageContainer').style.display = 'block';
+            } else {
+                alert('Please enter a valid image URL from Postimages.');
             }
         });
     </script>
+
 </body>
 </html>
