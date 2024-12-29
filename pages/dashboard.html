@@ -3,84 +3,85 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>YouTube Downloader</title>
+  <title>Dynamic Button Page</title>
   <style>
-    body {
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
       font-family: Arial, sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(to bottom, #1e3c72, #2a5298);
+      overflow: hidden;
+    }
+
+    .button-container {
+      position: relative;
       text-align: center;
-      margin-top: 50px;
     }
-    form {
-      margin-bottom: 20px;
-    }
-    input {
-      padding: 10px;
-      width: 300px;
-      font-size: 16px;
-    }
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      background-color: #007bff;
+
+    .dynamic-button {
+      padding: 15px 30px;
+      font-size: 18px;
+      font-weight: bold;
       color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 10px;
+      background: linear-gradient(45deg, #ff0000, #ff7300, #ff0, #0f0, #00f, #7300ff, #f0f);
+      background-size: 400%;
+      cursor: pointer;
+      animation: lightCycle 6s infinite linear;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-    button:hover {
-      background-color: #0056b3;
+
+    .dynamic-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
     }
-    #download-link {
-      margin-top: 20px;
-      font-size: 18px;
+
+    @keyframes lightCycle {
+      0% { background-position: 0%; }
+      100% { background-position: 400%; }
     }
-    #download-link a {
-      color: #007bff;
-      text-decoration: none;
+
+    .dynamic-button:active {
+      transform: scale(0.95);
     }
-    #download-link a:hover {
-      text-decoration: underline;
+
+    .smooth-transition {
+      animation: fadeIn 2s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>YouTube Downloader</h1>
-  <form id="youtube-form">
-    <input type="url" id="youtube-url" placeholder="Enter YouTube URL" required />
-    <button type="submit">Get Download Link</button>
-  </form>
-  <div id="download-link"></div>
+  <div class="button-container">
+    <button class="dynamic-button" onclick="openImagePage()">Click Me!</button>
+  </div>
 
   <script>
-    document.getElementById('youtube-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const url = document.getElementById('youtube-url').value;
-      const downloadLinkDiv = document.getElementById('download-link');
-
-      downloadLinkDiv.textContent = 'Processing... Please wait.';
-
-      try {
-        const response = await fetch('/api/get-download-link', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url })
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-          downloadLinkDiv.innerHTML = `
-            <p>Download link is ready:</p>
-            <a href="${data.downloadLink}" target="_blank">Click here to download</a>
-          `;
-        } else {
-          downloadLinkDiv.textContent = 'Failed to generate the download link. Please try again.';
-        }
-      } catch (error) {
-        downloadLinkDiv.textContent = 'An error occurred. Please try again.';
-        console.error('Error:', error);
-      }
-    });
+    function openImagePage() {
+      document.body.innerHTML = `
+        <div class="smooth-transition" style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; background: #2c3e50; color: white;">
+          <h1 style="margin-bottom: 20px; font-size: 2.5em;">Welcome to the Image Page</h1>
+          <img src="https://via.placeholder.com/500" alt="Placeholder Image" style="width: 60%; border-radius: 15px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);">
+        </div>
+      `;
+    }
   </script>
 </body>
 </html>
